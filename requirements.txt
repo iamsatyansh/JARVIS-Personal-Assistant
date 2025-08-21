@@ -1,0 +1,16 @@
+# ==============================================================================
+# File: requirements.txt
+# Description: List of Python packages required to run the project.
+#              Install using: pip install -r requirements.txt
+# ==============================================================================
+python-dotenv
+edge-tts
+pygame
+SpeechRecognition
+PyAudio
+pywhatkit
+newsapi-python
+wikipedia
+pyjokes
+psutil
+requests
