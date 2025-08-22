@@ -7,6 +7,42 @@ import re
 from typing import Tuple, Dict, Any
 
 class IntentParser:
+    """Parses user commands to determine intent."""
+    def __init__(self):
+        self.patterns = {
+            "search_query": r'\b(search for|google|find|look up|tell me about)\b(.+)',
+            "play_media": r'\b(play|put on)\b(.+)',
+            "memory_store": r'\b(remember that|remember|save|note)\b(.+)',
+            "memory_recall": r'\b(what did i say about|recall|do you remember)\b(.+)',
+            "time_query": r'\b(time|clock)\b',
+            "date_query": r'\b(date|day)\b',
+            "weather_query": r'\b(weather|forecast)\b',
+            "news_query": r'\b(news|headlines)\b',
+            "system_query": r'\b(system status|diagnostics)\b',
+            "joke_request": r'\b(joke|funny)\b',
+            "sleep_command": r'\b(sleep|goodbye|shut down)\b',
+            "health_check": r'\b(how are you|status report)\b',
+        }
+
+    async def parse(self, command: str) -> tuple:
+        for intent, pattern in self.patterns.items():
+            match = re.search(pattern, command, re.IGNORECASE)
+            if match:
+                entities = {}
+                if len(match.groups()) > 1:
+                    entities['query'] = match.group(2).strip()
+                
+                location_match = re.search(r'\b(in|for)\b\s+([a-zA-Z\s]+)', command)
+                if location_match:
+                    entities['location'] = location_match.group(2).strip()
+                
+                return intent, entities
+        return "conversation", {"original_command": command}
+
+
+
+''' --------- Or use this ----------
+class IntentParser:
     """Parses user commands to determine intent and extract entities using regex."""
 
     def __init__(self):
@@ -50,3 +86,4 @@ class IntentParser:
             entities['query'] = match.group(2).strip()
             
         return entities
+'''
