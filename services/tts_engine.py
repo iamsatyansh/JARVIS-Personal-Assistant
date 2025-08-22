@@ -9,7 +9,42 @@ import tempfile
 import os
 import logging
 from typing import Dict
+@dataclass
+class EmotionalParameters:
+    rate: str; pitch: str; volume: str
 
+class TTSEngine:
+    """Enhanced TTS engine."""
+    def __init__(self, settings: VoiceSettings):
+        self.settings = settings
+        pygame.mixer.init()
+        self.emotion_params = {
+            "professional": EmotionalParameters(rate="+0%", pitch="+0Hz", volume="+0%"),
+            "happy": EmotionalParameters(rate="+10%", pitch="+20Hz", volume="+5%"),
+            "serious": EmotionalParameters(rate="-10%", pitch="-20Hz", volume="+0%"),
+            "concerned": EmotionalParameters(rate="-5%", pitch="-10Hz", volume="+0%"),
+            "calm": EmotionalParameters(rate="-15%", pitch="-30Hz", volume="-5%"),
+        }
+
+    async def speak(self, text: str, emotion: str = "professional"):
+        if not text: return
+        params = self.emotion_params.get(emotion, self.emotion_params["professional"])
+        communicate = edge_tts.Communicate(
+            text, self.settings.voice, rate=params.rate, pitch=params.pitch, volume=params.volume
+        )
+        
+        # Using a context manager for tempfile is safer
+        with tempfile.NamedTemporaryFile(delete=True, suffix=".mp3") as tmp_file:
+            await communicate.save(tmp_file.name)
+            pygame.mixer.music.load(tmp_file.name)
+            pygame.mixer.music.play()
+            while pygame.mixer.music.get_busy():
+                await asyncio.sleep(0.1)
+
+    async def close(self):
+        pygame.mixer.quit()
+        
+''' -----------Or use this -----------
 logger = logging.getLogger(__name__)
 
 class TTSEngine:
@@ -68,4 +103,4 @@ class TTSEngine:
             "serious": {"rate": "-15%", "pitch": "-30Hz", "volume": "+0%"},
             "neutral": {"rate": "+0%", "pitch": "+0Hz", "volume": "+0%"}
         }
-        return params.get(emotion, params["neutral"])
+        return params.get(emotion, params["neutral"]) '''
