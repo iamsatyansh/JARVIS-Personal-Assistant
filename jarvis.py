@@ -3,6 +3,8 @@
 # Description: The core class for the JARVIS AI assistant, handling the main
 #              event loop, command processing, and intent routing.
 # ==============================================================================
+''' Now in Core/Jarvis.py 
+
 import asyncio
 import logging
 import speech_recognition as sr
@@ -277,3 +279,4 @@ class AdvancedJARVIS:
             "Understood. What's the next step?",
         ]
         await self.tts_engine.speak(random.choice(responses))
+'''
